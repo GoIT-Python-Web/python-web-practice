@@ -28,10 +28,19 @@ async def update_cat(file: UploadFile = File(), db: Session = Depends(get_db),
         api_secret=settings.cloudinary_api_secret,
         secure=True
     )
-    public_id = f"Web8/{current_user.id}{current_user.username}"
+    public_id = f"Web8/{current_user.id}{current_user.username}"  # generate_folder_name
     r = cloudinary.uploader.upload(file.file, public_id=public_id, owerwrite=True)
     avatar_url = cloudinary.CloudinaryImage(public_id).build_url(width=250, height=250, crop='fill',
                                                                  version=r.get('version'))
     user = await repository_users.update_avatar(current_user.email, avatar_url, db)
 
     return user
+
+# import hashlib
+
+# def generate_folder_name(user_id: int, email: str) -> str:
+#     # Конкатенируем идентификатор и email пользователя в строку
+#     user_str = f"{user_id}_{email}"
+#     # Применяем хэш-функцию SHA256 для получения уникального имени папки
+#     folder_name = hashlib.sha256(user_str.encode('utf-8')).hexdigest()[:12]
+#     return folder_name

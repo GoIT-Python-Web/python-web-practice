@@ -16,35 +16,34 @@ help_message = """
 
 
 def get_students():
-    students = session.query(Student).options(joinedload('teachers')).all()
+    students = session.query(Student).options(joinedload(Student.teachers)).all()
     for s in students:
         print(vars(s))
         print(f"{[f'id: {t.id} first_name: {t.first_name}' for t in s.teachers]}")
 
 
 def get_students_join():
-    students = session.query(Student).join('teachers').all()
+    students = session.query(Student).join(Student.teachers).all()
     for s in students:
         print(vars(s))
         print(f"{[f'id: {t.id} first_name: {t.first_name}' for t in s.teachers]}")
 
 
 def get_teachers():
-    teachers = session.query(Teacher).options(joinedload('students')).all()
+    teachers = session.query(Teacher).options(joinedload(Teacher.students)).all()
     for t in teachers:
         print(vars(t))
         print(f"{[f'id: {s.id} first_name: {s.first_name}' for s in t.students]}")
 
 
 def get_teachers_filter():
-    teachers = session.query(Teacher).options(joinedload('students')).filter(and_(
+    teachers = session.query(Teacher).options(joinedload(Teacher.students)).filter(and_(
         Teacher.start_work > datetime(year=2015, month=1, day=1),
         Teacher.start_work < datetime(year=2021, month=1, day=1)
     )).all()
     for t in teachers:
         print(vars(t))
         print(f"{[f'id: {s.id} first_name: {s.first_name}' for s in t.students]}")
-
 
 
 if __name__ == '__main__':

@@ -17,6 +17,10 @@ class Teacher(Base):
     start_work = Column('start_work', Date, nullable=True)
     students = relationship('Student', secondary='teachers_to_students', back_populates='teachers')
 
+    @hybrid_property
+    def fullname(self):
+        return self.first_name + ' ' + self.last_name
+
 
 class Student(Base):
     __tablename__ = 'students'
@@ -63,3 +67,7 @@ class ContactPerson(Base):
     address = Column('address', String(100), nullable=True)
     student_id = Column('student_id', ForeignKey('students.id', ondelete='CASCADE'), nullable=False)
     student = relationship('Student', back_populates='contacts')
+
+    @hybrid_property
+    def fullname(self):
+        return self.first_name + ' ' + self.last_name

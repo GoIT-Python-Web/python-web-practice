@@ -8,6 +8,7 @@ authors = ["Yuriy Kuchma <krabatua@gmail.com>"]
 python = "^3.10"
 psycopg2 = "^2.9.5"
 Faker = "^15.3.1"
+progress = "^1.6"
 
 [tool.poetry.dev-dependencies]
 

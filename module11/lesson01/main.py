@@ -178,3 +178,28 @@ async def remove_cat(cat_id: int = Path(1, ge=1), db: Session = Depends(get_db))
     db.delete(cat)
     db.commit()
     return cat
+
+
+# Upload File
+
+# from fastapi import FastAPI, UploadFile, HTTPException
+# import os
+
+# app = FastAPI()
+
+# MAX_FILE_SIZE = 1000000  # максимальный размер файла в байтах
+
+# @app.post("/uploadfile/")
+# async def create_upload_file(file: UploadFile):
+#     file_size = 0
+#     file_location = f"files/{file.filename}"
+#     with open(file_location, "wb+") as file_object:
+#         while True:
+#             chunk = await file.read(1024)  # читаем по 1 КБ
+#             if not chunk:  # конец файла
+#                 break
+#             file_size += len(chunk)
+#             if file_size > MAX_FILE_SIZE:
+#                 raise HTTPException(status_code=413, detail="File size is over the limit")
+#             file_object.write(chunk)
+#     return {"filename": file.filename, "location": file_location}
