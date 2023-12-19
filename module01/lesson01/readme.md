@@ -356,16 +356,25 @@ class Engine:
     def start(self):
         return "Engine started"
 
-class Car:
-    def __init__(self, engine):
-        self.engine = engine
-
-    def start(self):
-        return self.engine.start()
-
 class ElectricEngine(Engine):
     def start(self):
         raise Exception("Starts differently")
+
+# Автомобілі
+class Car:
+    def __init__(self, engine: Engine):
+        self.engine = engine
+
+    def start(self):
+        return f"Car started with: {self.engine.start()}"
+
+class ElectricCar(Car):
+    def start(self):
+        if isinstance(self.engine, ElectricEngine):
+            return "Electric car: Electric engine started with a button"
+        else:
+            return super().start()
+
 ```
 
 Тут `ElectricEngine` є підкласом `Engine`, але він стартує інакше, порушуючи LSP.
@@ -373,6 +382,9 @@ class ElectricEngine(Engine):
 Кращий підхід:
 
 ```python
+from abc import ABC, abstractmethod
+
+# Двигуни
 class Engine(ABC):
     @abstractmethod
     def start(self):
@@ -385,6 +397,36 @@ class GasEngine(Engine):
 class ElectricEngine(Engine):
     def start(self):
         return "Electric engine started with a button"
+
+
+# Автомобілі
+class Car(ABC):
+    def __init__(self, engine: Engine):
+        self.engine = engine
+
+    @abstractmethod
+    def start(self):
+        pass
+
+class GasCar(Car):
+    def start(self):
+        return f"Gas car: {self.engine.start()}"
+
+class ElectricCar(Car):
+    def start(self):
+        return f"Electric car: {self.engine.start()}"
+
+
+# Перевірка роботи
+gas_engine = GasEngine()
+electric_engine = ElectricEngine()
+
+bmw = GasCar(gas_engine)
+tesla = ElectricCar(electric_engine)
+
+print(bmw.start())  # Output: Gas car: Gas engine started
+print(tesla.start())  # Output: Electric car: Electric engine started with a button
+
 ```
 
 LSP забезпечує, що підкласи будуть діяти так, як очікується від базового класу, гарантуючи відсутність несподіваних проблем і помилок.

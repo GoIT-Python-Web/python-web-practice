@@ -31,7 +31,7 @@ class Adder(Operation):
         return sum(self.data)
 
     def info(self):
-        return OperationType.SUM.value
+        return OperationType.SUM
 
 
 class Multiplier(Operation):
@@ -46,7 +46,7 @@ class Multiplier(Operation):
         return mul
 
     def info(self):
-        return OperationType.MUL.value
+        return OperationType.MUL
 
 
 class Factory(ABC):
@@ -83,5 +83,7 @@ def calculation(factory: Factory):
 
 if __name__ == "__main__":
     data = [29, 30, 1, 2, 3, 4, 5]
-    print(calculation(SumFactory(data)))
+    result, type_operation, data = calculation(SumFactory(data))
+    print(f"Результат: {result}, Тип операції: {type_operation}, Дані: {data}")
     print(calculation(MulFactory(data)))
+    print(f"{OperationType.MUL}")

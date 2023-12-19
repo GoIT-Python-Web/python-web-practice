@@ -1,11 +1,13 @@
-import requests
-
 """
 Dependency inversion. Согласно принципу модули должны зависеть от других модулей не напрямую, а от абстракций. Модули 
 верхних уровней не должны зависеть от модулей нижних уровней. 
 
 Добавляем Connection и RequestConnection в работу класса ApiClient
 """
+
+
+from typing import Any, Dict, List
+import requests
 
 
 # https://api.privatbank.ua/p24api/pubinfo?exchange&coursid=11
@@ -18,25 +20,39 @@ class ApiClient:
         return response.json()
 
 
-def pretty_view(data: list[dict]):
-    pattern = '|{:^10}|{:^10}|{:^10}|'
-    print(pattern.format('currency', 'sale', 'buy'))
-    for el in data:
-        currency, *_ = el.keys()
-        buy = el.get(currency).get('buy')
-        sale = el.get(currency).get('sale')
-        print(pattern.format(currency, sale, buy))
+class Viewer:
+    def display(self, data: List[Dict[str, Any]]):
+        raise NotImplementedError
 
 
-def data_adapter(data: dict) -> list[dict]:
-    return [{f"{el.get('ccy')}": {"buy": float(el.get('buy')), "sale": float(el.get('sale'))}} for el in data]
+class CurrencyViewer(Viewer):
+    def _adapter(self, data):
+        result = [
+            {
+                f"{el.get('ccy')}": {
+                    "buy": float(el.get("buy")),
+                    "sale": float(el.get("sale")),
+                }
+            }
+            for el in data
+        ]
+        return result
+
+    def display(self, data: List[Dict[str, Any]]):
+        result = self._adapter(data)
+        pattern = "|{:^10}|{:^10}|{:^10}|"
+        print(pattern.format("currency", "sale", "buy"))
+        for el in result:
+            currency, *_ = el.keys()
+            buy = el.get(currency).get("buy")
+            sale = el.get(currency).get("sale")
+            print(pattern.format(currency, sale, buy))
 
 
 if __name__ == "__main__":
     client = ApiClient(requests)
+    viewer = CurrencyViewer()
     data = client.get_json(
         "https://api.privatbank.ua/p24api/pubinfo?exchange&coursid=11"
     )
-    pretty_view(data_adapter(data))
-
-# ApiClient -> Adapter -> pretty_view
+    viewer.display(data)

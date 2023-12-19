@@ -15,6 +15,6 @@ def foo():
 
 
 if __name__ == "__main__":
-    logger.log(logging.DEBUG, "Start")
+    # logger.log(logging.DEBUG, "Start")
     baz()
     foo()
